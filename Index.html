@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+  <title>Pet Store</title>
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #f8f8f8;
+    }
+    .checkout-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    .checkout-btn:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div id="webstore">
+    <!-- HEADER with Checkout button -->
+    <header>
+      <h1>{{ message }}</h1>
+      <button class="checkout-btn" @click="goToCheckout">
+        {{ cartItemCount }} 🛒 Checkout
+      </button>
+    </header>
+    
+    <!-- Store Page -->
+    <main v-if="!checkoutPage">
+      <figure>
+        <img v-bind:src="product.image" alt="Cat Image" width="150">
+        <h2>{{ product.title }}</h2>
+        <p>ID: {{ product.id }}</p>
+        <p>{{ product.description }}</p>
+        <p>Price: {{ product.price }} </p>
+        <button v-on:click="additemstocart(product)">Add to Cart</button>
+      </figure>
+
+      <!-- Cart Section -->
+      <section v-if="cart.length > 0">
+        <h2>🛒 Cart</h2>
+        <ul>
+          <li v-for="(item, index) in cart" :key="index">
+            {{ item.title }} - {{ item.price }}
+          </li>
+        </ul>
+        <p><b>Total Items:</b> {{ cartItemCount }}</p>
+      </section>
+    </main>
+
+    <!-- Checkout Page -->
+    <div v-if="checkoutPage">
+      <h2> Welcome to Checkout!</h2>
+      <p>You have {{ cartItemCount }} items in your cart.</p>
+      <button @click="goBack">⬅ Go Back</button>
+    </div>
+  </div>
+
+  <script>
+    let webstore = new Vue({
+      el: '#webstore',
+      data: {
+        message: 'Welcome to my Pet Store !!!!',
+        product: {
+          id: 1001,
+          title: 'Cat Food 25 lb bag',
+          description: 'Irresistible cat food for your cat',
+          price: 2000,
+          image: 'decathlon.jpg'
+        },
+        cart: [],       // cart starts empty
+        maxInventory: 5, // maximum stock available
+        checkoutPage: false // flag to toggle between store & checkout
+      },
+      methods: {
+        additemstocart(product) {
+          if (this.cart.length < this.maxInventory) {
+            this.cart.push(product);
+          } else {
+            prompt("Inventory empty! You cannot add more than " + this.maxInventory + " items.", "Out of stock");
+          }
+        },
+        goToCheckout() {
+          this.checkoutPage = true;
+        },
+        goBack() {
+          this.checkoutPage = false;
+        }
+      },
+      computed: {
+        cartItemCount() {
+          return this.cart.length || "0";
+        }
+      }
+    });
+  </script>
+</body>
+</html>
